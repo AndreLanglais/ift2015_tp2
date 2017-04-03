@@ -16,10 +16,12 @@ class HashTable:
         return self._bucket_get(i, key)
 
     def set(self, key):
+        #print("SCALE: " + str(self._scale))
+        #print("SHIFT: " + str(self._shift))
         i = self._compress(self._hash(key))
         self._bucket_set(i, key)
         if self._size > len(self._table) // 2:
-            self._resize(2 * len(self._table) - 1)
+            self._resize(2*len(self._table) - 1)
 
     def delete(self, key):
         i = self._compress(self._hash(key))
@@ -31,20 +33,24 @@ class HashTable:
     def __len__(self):
         return self._size
 
+    def __str__(self):
+        return str(self._table)
+
     def _resize(self, c):
         old = self._table
-        self._table = c * None
-        self._n = 0
+        self._table = c*[None]
         for i in range(len(old)):
             self._table[i] = old[i]
-            self._size += 1
 
     # using chaining method for collision
     def _bucket_get(self, i, k):
         bucket = self._table[i]
+        if bucket is None:
+            return False
         try:
             j = bucket.index(k)
         except ValueError:
+            print("not found")
             return False
         return bucket[j]
 
@@ -77,6 +83,7 @@ class HashTable:
     def _compress(self, hashcode):  # using MAD method
         return (hashcode*self._scale + self._shift) % self._prime % len(self._table)
 
+"""
 if __name__ == '__main__':
     t = HashTable()
     s = "network"
@@ -86,4 +93,19 @@ if __name__ == '__main__':
     t.set(y)
     t.set(o)
     print(t.get(s))
-    t.get("yolo")
+    print(t)
+
+# main
+"""
+dictionnary = HashTable()
+sentence = ""
+
+with open("dict.txt") as file:
+    for line in file:
+        dictionnary.set(line[:-1])
+
+with open("input.txt") as file:
+    for line in file:
+        sentence += line[:-1]
+
+# correct using dict
