@@ -99,6 +99,7 @@ if __name__ == '__main__':
 """
 
 sentence = ""
+alphabet = []
 with open("dict.txt") as file:
     t = 0
     for i in file:
@@ -107,18 +108,15 @@ with open("dict.txt") as file:
 
 with open("dict.txt") as file:
     for line in file:
-        dictionnary.set(line[:-1])
+        for i in line[:-1]:
+            if i not in alphabet:
+                alphabet.append(i)
+    dictionnary.set(line[:-1])
 
 with open("input.txt") as file:
     for line in file:
         sentence += line[:-1]
 # correct using dict
-
-
-
-
-
-
 
 
 ###Code Suggestion
