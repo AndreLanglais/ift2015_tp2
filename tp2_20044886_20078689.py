@@ -81,6 +81,50 @@ class HashTable:
     def _compress(self, hashcode):  # using MAD method
         return (hashcode*self._scale + self._shift) % self._prime % len(self._table)
 
+
+######################################################################################################3
+def suggestion(word):
+    liste = []
+    #############################################################################
+    ###Insérer // Remplacer
+    def replace(word, position, char):
+        wordlist = list(word)
+        wordlist[position] = char
+        return "".join(wordlist)
+
+    for i in range(0, len(word)):
+        for j in range(0, len(alphabet)):
+            ##Insérer
+            liste.append((word[:i] + alphabet[j] + word[i:]))
+            ##Remplacer
+            liste.append(replace(word, i, alphabet[j]))
+
+    #############################################################################
+    ###Supprimer // Séparer
+
+    for i in range(0, len(word)):
+        ##Supprimer
+        liste.append(word[:i] + word[i + 1:])
+        ##Séparer
+        liste.append(word[i:len(word) + 1])
+        liste.append(word[0:i + 1])
+
+    #############################################################################
+    ###Intervertir
+
+    def swap(word, char1, char2):
+        wordlist = list(word)
+        wordlist[char1], wordlist[char2] = wordlist[char2], wordlist[char1]
+        return "".join(wordlist)
+    ##Swap
+    for i in range(0, len(word) - 1):
+        liste.append(swap(word, i, i + 1))
+
+
+    liste = list(set(liste))  ### Enlever duplicat
+    return liste
+
+
 """
 if __name__ == '__main__':
     t = HashTable()
@@ -97,9 +141,10 @@ if __name__ == '__main__':
 
 # main
 """
-chardel = ['"',',','.',';',':','!','?',"'"]
+chardel = ['"',',','.',';',':','!','?',"'"," "]
 import re
 sentence = ""
+alphabet = []
 with open("dict.txt") as file:
     t = 0
     for i in file:
@@ -108,7 +153,10 @@ with open("dict.txt") as file:
 
 with open("dict.txt") as file:
     for line in file:
-        dictionnary.set(line[:-1])
+        for i in line[:-1]:
+            if i not in alphabet:
+                alphabet.append(i)
+    dictionnary.set(line[:-1])
 
 with open("input.txt") as file:
     for line in file:
@@ -116,6 +164,8 @@ with open("input.txt") as file:
 # correct using dict
 
 
+## Maybe need some FIX
+## Waiting for dictionnary
 sentence_table = re.split("(\W+)",sentence)
 
 sentence_returned = ""
@@ -123,14 +173,20 @@ for word in sentence_table:
     if any(char in chardel for char in word):
         sentence_returned += word
     else:
-        if(dictionnary.get(word)):
+        lowerword = word.lower()
+        print("LOWER WORD : " + lowerword)
+        if dictionnary.get(lowerword)!= False:
             sentence_returned +=word
         else:
-            possibilite = suggestion(word)
-
-
-
-
+            allpossibilite = suggestion(lowerword)
+            word = "[" + word + "]("
+            for w in allpossibilite:
+                if dictionnary.get(w) == False:
+                    word += w + ","
+            word += ")"
+            sentence_returned += word
+print(sentence)
+print(sentence_returned)
 
 
 """
@@ -150,54 +206,3 @@ for word in sentence_table:
 
 """
 
-
-
-
-###Code Suggestion
-"""
-
-
-
-
-"""
-def suggestion(word):
-    liste = []
-    #############################################################################
-    ###Insérer // Remplacer
-    def replace(word, position, char):
-        wordlist = list(word)
-        wordlist[position] = char
-        return "".join(wordlist)
-
-    for i in range(0, len(word)):
-        for j in range(0, len(charset)):
-            ##Insérer
-            liste.append((word[:i] + charset[j] + word[i:]))
-            ##Remplacer
-            liste.append(replace(word, i, charset[j]))
-
-    #############################################################################
-    ###Supprimer // Séparer
-
-    for i in range(0, len(word)):
-        ##Supprimer
-        liste.append(word[:i] + word[i + 1:])
-        ##Séparer
-        liste.append(word[i:len(word) + 1])
-        liste.append(word[0:i + 1])
-
-    #############################################################################
-    ###Intervertir
-
-    def swap(word, char1, char2):
-        wordlist = list(word)
-        wordlist[char1], wordlist[char2] = wordlist[char2], wordlist[char1]
-        return "".join(wordlist)
-
-    ##Swap
-    for i in range(0, len(word) - 1):
-        liste.append(swap(word, i, i + 1))
-
-
-    liste = list(set(liste))  ### Enlever duplicat
-    return liste
