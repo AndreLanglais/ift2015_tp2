@@ -128,30 +128,41 @@ with open("input.txt") as file:
 ### Supprimer
 ### Remplacer
 ### Séparer
-import time
 charset = [ "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","-"];
 
 
 chardel = ['"',',','.',';',':','!','?',"'"]
 
 
-### 1. prendre phrase, copier et replace tout (. , : ; ! ? ' ")
-###		s = s.replace(delchar[i], " ")
-### 2. Split string copy (" ")
-###		s.split()
-### 3.
-start = time.time()
 p='The beavr spie made "furroz" with his spikked uvual, pluckyplywood!'
 liste = []
 split = p.split()
 
 for s in split :
-##Insérer
+	#############################################################################
+	###Insérer // Remplacer
+	def replace(word, position, char):
+		wordlist = list(word)
+		wordlist[position] = char
+		return "".join(wordlist)
 
-    for i in range(0,len(s)):
-        for j in range(0,len(charset)):
+	for i in range(0,len(s)):
+		for j in range(0,len(charset)):
+			##Insérer
 			liste.append((s[:i] + charset[j] + s[i:]))
+			##Remplacer
+			liste.append(replace(s,i,charset[j]))
 
+
+	#############################################################################
+	###Supprimer // Séparer
+
+	for i in range(0,len(s)):
+		##Supprimer
+		liste.append(s[:i] + s[i+1:])
+		##Séparer
+		liste.append(s[i:len(s)+1])
+		liste.append(s[0:i+1])
 
 	#############################################################################
 	###Intervertir
@@ -160,43 +171,17 @@ for s in split :
 		wordlist = list(word)
 		wordlist[char1], wordlist[char2] = wordlist[char2] ,wordlist[char1]
 		return "".join(wordlist)
-
+		##Swap
 	for i in range(0,len(s)-1):
 		liste.append(swap(s,i,i+1))
 
 
-	#############################################################################
-	###Supprimer
-
-	for i in range(0,len(s)):
-		liste.append(s[:i] + s[i+1:])
-
-
-	#############################################################################
-	###Remplacer
-
-	def replace(word, position, char):
-		wordlist = list(word)
-		wordlist[position] = char
-		return "".join(wordlist)
-
-	for i in range(0,len(s)):
-		for j in range(len(charset)):
-			liste.append(replace(s,i,charset[j]))
 
 
 
-	#############################################################################
-	### Séparer
-	for i in range(0,len(s)):
-		liste.append(s[i:len(s)+1])
-		liste.append(s[0:i+1])
+liste = list(set(liste)) ### Enlever duplicat
 
 
-	liste = list(set(liste)) ### Enlever duplicat
-
-end = time.time()
 liste.sort()
-print(liste)
-print("TIME : " + str(end-start))
+
 """
