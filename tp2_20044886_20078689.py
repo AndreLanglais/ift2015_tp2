@@ -48,7 +48,7 @@ class HashTable:
         try:
             j = bucket.index(k)
         except ValueError:
-            print("not found")
+            ##print("not found")
             return False
         return bucket[j]
 
@@ -97,7 +97,8 @@ if __name__ == '__main__':
 
 # main
 """
-
+chardel = ['"',',','.',';',':','!','?',"'"]
+import re
 sentence = ""
 with open("dict.txt") as file:
     t = 0
@@ -115,73 +116,88 @@ with open("input.txt") as file:
 # correct using dict
 
 
+sentence_table = re.split("(\W+)",sentence)
+
+sentence_returned = ""
+for word in sentence_table:
+    if any(char in chardel for char in word):
+        sentence_returned += word
+    else:
+        if(dictionnary.get(word)):
+            sentence_returned +=word
+        else:
+            possibilite = suggestion(word)
 
 
+
+
+
+
+"""
+    **Quand vérifier MAJ ?
+
+    1.Séparer mots/espace/virgule/apostrophe/points
+    2.Boucle sur les séparation
+        2.1.Si word[0] est dans chardel
+            2.1.1.Pas de traitement, on affiche
+        2.2.Sinon
+            2.2.1.Verifier si le mot est dans la table
+                2.2.1.1. Si oui : on affiche direction
+                2.2.1.1. Si non : on genere les possibilitées
+                    2.2.1.1.1. On filtre les possibilitées dans la table
+                    2.2.1.1.2. word = "[" + word + "]("+possitilitées + ")"
+    3.Fini ?
+
+"""
 
 
 
 
 ###Code Suggestion
 """
-### Intervertir
-### Insérer
-### Supprimer
-### Remplacer
-### Séparer
-charset = [ "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","-"];
-
-
-chardel = ['"',',','.',';',':','!','?',"'"]
-
-
-p='The beavr spie made "furroz" with his spikked uvual, pluckyplywood!'
-liste = []
-split = p.split()
-
-for s in split :
-	#############################################################################
-	###Insérer // Remplacer
-	def replace(word, position, char):
-		wordlist = list(word)
-		wordlist[position] = char
-		return "".join(wordlist)
-
-	for i in range(0,len(s)):
-		for j in range(0,len(charset)):
-			##Insérer
-			liste.append((s[:i] + charset[j] + s[i:]))
-			##Remplacer
-			liste.append(replace(s,i,charset[j]))
-
-
-	#############################################################################
-	###Supprimer // Séparer
-
-	for i in range(0,len(s)):
-		##Supprimer
-		liste.append(s[:i] + s[i+1:])
-		##Séparer
-		liste.append(s[i:len(s)+1])
-		liste.append(s[0:i+1])
-
-	#############################################################################
-	###Intervertir
-
-	def swap(word, char1, char2):
-		wordlist = list(word)
-		wordlist[char1], wordlist[char2] = wordlist[char2] ,wordlist[char1]
-		return "".join(wordlist)
-		##Swap
-	for i in range(0,len(s)-1):
-		liste.append(swap(s,i,i+1))
 
 
 
-
-
-liste = list(set(liste)) ### Enlever duplicat
-
-
-liste.sort()
 
 """
+def suggestion(word):
+    liste = []
+    #############################################################################
+    ###Insérer // Remplacer
+    def replace(word, position, char):
+        wordlist = list(word)
+        wordlist[position] = char
+        return "".join(wordlist)
+
+    for i in range(0, len(word)):
+        for j in range(0, len(charset)):
+            ##Insérer
+            liste.append((word[:i] + charset[j] + word[i:]))
+            ##Remplacer
+            liste.append(replace(word, i, charset[j]))
+
+    #############################################################################
+    ###Supprimer // Séparer
+
+    for i in range(0, len(word)):
+        ##Supprimer
+        liste.append(word[:i] + word[i + 1:])
+        ##Séparer
+        liste.append(word[i:len(word) + 1])
+        liste.append(word[0:i + 1])
+
+    #############################################################################
+    ###Intervertir
+
+    def swap(word, char1, char2):
+        wordlist = list(word)
+        wordlist[char1], wordlist[char2] = wordlist[char2], wordlist[char1]
+        return "".join(wordlist)
+
+    ##Swap
+    for i in range(0, len(word) - 1):
+        liste.append(swap(word, i, i + 1))
+
+
+    liste = list(set(liste))  ### Enlever duplicat
+    return liste
