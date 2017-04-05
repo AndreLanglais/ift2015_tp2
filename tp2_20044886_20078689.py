@@ -20,8 +20,6 @@ class HashTable:
         #print("SHIFT: " + str(self._shift))
         i = self._compress(self._hash(key))
         self._bucket_set(i, key)
-        if self._size > len(self._table) // 2:
-            self._resize(2*len(self._table) - 1)
 
     def delete(self, key):
         i = self._compress(self._hash(key))
@@ -35,13 +33,13 @@ class HashTable:
 
     def __str__(self):
         return str(self._table)
-
+    """
     def _resize(self, c):
         old = self._table
         self._table = c*[None]
         for i in range(len(old)):
             self._table[i] = old[i]
-
+    """
     # using chaining method for collision
     def _bucket_get(self, i, k):
         bucket = self._table[i]
@@ -99,8 +97,13 @@ if __name__ == '__main__':
 
 # main
 """
-dictionnary = HashTable()
+
 sentence = ""
+with open("dict.txt") as file:
+    t = 0
+    for i in file:
+        t += 1
+    dictionnary = HashTable(t)
 
 with open("dict.txt") as file:
     for line in file:
@@ -109,10 +112,7 @@ with open("dict.txt") as file:
 with open("input.txt") as file:
     for line in file:
         sentence += line[:-1]
-
 # correct using dict
-
-
 
 
 
