@@ -12,18 +12,16 @@ class HashTable:
         self._shift = random.randrange(p)  # shifting for MAD
 
     def get(self, key):
-        i = self._compress(self._hash(key))
-        return self._bucket_get(i, key)
+        index = self._compress(self._hash(key))
+        return self._bucket_get(index, key)
 
     def set(self, key):
-        #print("SCALE: " + str(self._scale))
-        #print("SHIFT: " + str(self._shift))
-        i = self._compress(self._hash(key))
-        self._bucket_set(i, key)
+        index = self._compress(self._hash(key))
+        self._bucket_set(index, key)
 
     def delete(self, key):
-        i = self._compress(self._hash(key))
-        succes = self._bucket_delete(i, key)
+        index = self._compress(self._hash(key))
+        succes = self._bucket_delete(index, key)
         if succes:
             self._size -= 1
         return
@@ -48,7 +46,6 @@ class HashTable:
         try:
             j = bucket.index(k)
         except ValueError:
-            ##print("not found")
             return False
         return bucket[j]
 
@@ -156,7 +153,7 @@ with open("dict.txt") as file:
         for i in line[:-1]:
             if i not in alphabet:
                 alphabet.append(i)
-    dictionnary.set(line[:-1])
+        dictionnary.set(line[:-1])
 
 with open("input.txt") as file:
     for line in file:
@@ -174,18 +171,18 @@ for word in sentence_table:
         sentence_returned += word
     else:
         lowerword = word.lower()
-        print("LOWER WORD : " + lowerword)
+        #print("LOWER WORD : " + lowerword)
         if dictionnary.get(lowerword)!= False:
             sentence_returned +=word
         else:
             allpossibilite = suggestion(lowerword)
             word = "[" + word + "]("
             for w in allpossibilite:
-                if dictionnary.get(w) == False:
+                if dictionnary.get(w) != False:
                     word += w + ","
-            word += ")"
+            word = word[:-1] + ")"
             sentence_returned += word
-print(sentence)
+#print(sentence)
 print(sentence_returned)
 
 
