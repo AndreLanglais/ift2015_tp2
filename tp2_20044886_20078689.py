@@ -1,10 +1,9 @@
 import random
-
+import time
 
 class HashTable:
-
     def __init__(self, cap=11, p=109345121, polyval=33):
-        self._table = cap*[None]
+        self._table = cap * [None]
         self._size = 0
         self._prime = p  # prime for MAD compression
         self._polyval = polyval  # value used in horners
@@ -31,6 +30,7 @@ class HashTable:
 
     def __str__(self):
         return str(self._table)
+
     """
     def _resize(self, c):
         old = self._table
@@ -38,6 +38,7 @@ class HashTable:
         for i in range(len(old)):
             self._table[i] = old[i]
     """
+
     # using chaining method for collision
     def _bucket_get(self, i, k):
         bucket = self._table[i]
@@ -72,19 +73,20 @@ class HashTable:
     def _horner(self, x, values):
         hashcode = 0
         for c in reversed(values):
-            hashcode = x*hashcode + ord(c)
+            hashcode = x * hashcode + ord(c)
         return hashcode
 
     def _compress(self, hashcode):  # using MAD method
-        return (hashcode*self._scale + self._shift) % self._prime % len(self._table)
+        return (hashcode * self._scale + self._shift) % self._prime % len(self._table)
 
 
 ######################################################################################################3
-def suggestion(word):
+def suggestion(word, dict):
     liste = []
+
     #############################################################################
     ###Insérer // Remplacer
-    def replace(word, position, char):
+    def replaceword(word, position, char):
         wordlist = list(word)
         wordlist[position] = char
         return "".join(wordlist)
@@ -92,19 +94,26 @@ def suggestion(word):
     for i in range(0, len(word)):
         for j in range(0, len(alphabet)):
             ##Insérer
-            liste.append((word[:i] + alphabet[j] + word[i:]))
+            insert = (word[:i] + alphabet[j] + word[i:])
+            if (dict.get(insert) != False): liste.append(insert)
             ##Remplacer
-            liste.append(replace(word, i, alphabet[j]))
+            replace = replaceword(word, i, alphabet[j])
+            if (dict.get(replace) != False): liste.append(replace)
 
     #############################################################################
     ###Supprimer // Séparer
 
     for i in range(0, len(word)):
         ##Supprimer
-        liste.append(word[:i] + word[i + 1:])
+        suppress = word[:i] + word[i + 1:]
+        if (dict.get(suppress) != False): liste.append(suppress)
+
         ##Séparer
-        liste.append(word[i:len(word) + 1])
-        liste.append(word[0:i + 1])
+        split1 = word[0:i]
+        split2 = word[i:len(word) + 1]
+
+        if (dict.get(split1) != False and dict.get(split2) != False):
+            liste.append(split1 + " " + split2)
 
     #############################################################################
     ###Intervertir
@@ -113,10 +122,11 @@ def suggestion(word):
         wordlist = list(word)
         wordlist[char1], wordlist[char2] = wordlist[char2], wordlist[char1]
         return "".join(wordlist)
+
     ##Swap
     for i in range(0, len(word) - 1):
-        liste.append(swap(word, i, i + 1))
-
+        swapped = swap(word, i, i + 1)
+        if dict.get(swapped): liste.append(swapped)
 
     liste = list(set(liste))  ### Enlever duplicat
     return liste
@@ -138,10 +148,13 @@ if __name__ == '__main__':
 
 # main
 """
-chardel = ['"',',','.',';',':','!','?',"'"," "]
+debutall = time.time()
+chardel = ['"', ',', '.', ';', ':', '!', '?', "'", " "]
 import re
+
 sentence = ""
 alphabet = []
+debutdict = time.time()
 with open("dict.txt") as file:
     t = 0
     for i in file:
@@ -154,7 +167,7 @@ with open("dict.txt") as file:
             if i not in alphabet:
                 alphabet.append(i)
         dictionnary.set(line[:-1])
-
+findict = time.time()
 with open("input.txt") as file:
     for line in file:
         sentence += line[:-1]
@@ -163,7 +176,8 @@ with open("input.txt") as file:
 
 ## Maybe need some FIX
 ## Waiting for dictionnary
-sentence_table = re.split("(\W+)",sentence)
+debutsugg = time.time()
+sentence_table = re.split("(\W+)", sentence)
 
 sentence_returned = ""
 for word in sentence_table:
@@ -171,20 +185,23 @@ for word in sentence_table:
         sentence_returned += word
     else:
         lowerword = word.lower()
-        #print("LOWER WORD : " + lowerword)
-        if dictionnary.get(lowerword)!= False:
-            sentence_returned +=word
+        # print("LOWER WORD : " + lowerword)
+        if dictionnary.get(lowerword) != False:
+            sentence_returned += word
         else:
-            allpossibilite = suggestion(lowerword)
+            allpossibilite = suggestion(lowerword, dictionnary)
             word = "[" + word + "]("
             for w in allpossibilite:
-                if dictionnary.get(w) != False:
-                    word += w + ","
+                word += w + ","
             word = word[:-1] + ")"
             sentence_returned += word
-#print(sentence)
+# print(sentence)
+finsugg = time.time()
+finall = time.time()
 print(sentence_returned)
-
+print("TEMPS DICTIO : " + str(findict-debutdict))
+print("TEMPS SUGG : " + str(finsugg-debutsugg))
+print("OVERALL TIME : " + str(finall-debutall))
 
 """
     **Quand vérifier MAJ ?
