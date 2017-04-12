@@ -191,9 +191,17 @@ for word in sentence_table:
         else:
             allpossibilite = suggestion(lowerword, dictionnary)
             word = "[" + word + "]("
-            for w in allpossibilite:
-                word += w + ","
-            word = word[:-1] + ")"
+            if(word.islower()):
+                for w in allpossibilite:
+                    word += w + ","
+            else:
+                for w in allpossibilite:
+                    w = w[0].upper() + w[1:]
+                    word += w + ","
+            if(not allpossibilite):
+                word = word + ")"
+            else:
+                word = word[:-1] + ")"
             sentence_returned += word
 # print(sentence)
 finsugg = time.time()
