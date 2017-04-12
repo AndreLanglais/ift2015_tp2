@@ -1,5 +1,5 @@
 import random
-import time
+import re
 
 class HashTable:
     def __init__(self, cap=11, p=109345121, polyval=33):
@@ -80,44 +80,40 @@ class HashTable:
         return (hashcode * self._scale + self._shift) % self._prime % len(self._table)
 
 
-######################################################################################################3
+###Function that return possible valid word
 def suggestion(word, dict):
     liste = []
 
-    #############################################################################
-    ###Insérer // Remplacer
+    ###Function to replace wordchar at position for char
     def replaceword(word, position, char):
         wordlist = list(word)
         wordlist[position] = char
         return "".join(wordlist)
 
+    ###Insert and Replace
     for i in range(0, len(word)):
         for j in range(0, len(alphabet)):
-            ##Insérer
+            ##Insert
             insert = (word[:i] + alphabet[j] + word[i:])
             if (dict.get(insert) != False): liste.append(insert)
-            ##Remplacer
+            ##Replace
             replace = replaceword(word, i, alphabet[j])
             if (dict.get(replace) != False): liste.append(replace)
 
-    #############################################################################
-    ###Supprimer // Séparer
-
+    ###Delete // Split
     for i in range(0, len(word)):
-        ##Supprimer
+        ##Delete
         suppress = word[:i] + word[i + 1:]
         if (dict.get(suppress) != False): liste.append(suppress)
 
-        ##Séparer
+        ##Split
         split1 = word[0:i]
         split2 = word[i:len(word) + 1]
 
         if (dict.get(split1) != False and dict.get(split2) != False):
             liste.append(split1 + " " + split2)
 
-    #############################################################################
-    ###Intervertir
-
+    ###Function to swap 2 char in a word
     def swap(word, char1, char2):
         wordlist = list(word)
         wordlist[char1], wordlist[char2] = wordlist[char2], wordlist[char1]
@@ -131,35 +127,20 @@ def suggestion(word, dict):
     liste = list(set(liste))  ### Enlever duplicat
     return liste
 
-
-"""
-if __name__ == '__main__':
-    t = HashTable()
-    s = "network"
-    y = "ayyy"
-    o = "pogo"
-    t.set(s)
-    t.set(y)
-    t.set(o)
-    print(t.get(s))
-    t.get("yolo")
-
-    print(t)
-
-# main
-"""
-debutall = time.time()
+###Char that don't start words
 chardel = ['"', ',', '.', ';', ':', '!', '?', "'", " "]
-import re
 
 sentence = ""
 alphabet = []
-debutdict = time.time()
+
 with open("dict.txt") as file:
     t = 0
     for i in file:
         t += 1
     dictionnary = HashTable(t)
+    print(t)
+
+
 
 with open("dict.txt") as file:
     for line in file:
@@ -167,16 +148,11 @@ with open("dict.txt") as file:
             if i not in alphabet:
                 alphabet.append(i)
         dictionnary.set(line[:-1])
-findict = time.time()
+
 with open("input.txt") as file:
     for line in file:
         sentence += line[:-1]
-# correct using dict
 
-
-## Maybe need some FIX
-## Waiting for dictionnary
-debutsugg = time.time()
 sentence_table = re.split("(\W+)", sentence)
 
 sentence_returned = ""
@@ -191,40 +167,18 @@ for word in sentence_table:
         else:
             allpossibilite = suggestion(lowerword, dictionnary)
             word = "[" + word + "]("
-            if(word.islower()):
+            if (word.islower()):
                 for w in allpossibilite:
                     word += w + ","
             else:
                 for w in allpossibilite:
                     w = w[0].upper() + w[1:]
                     word += w + ","
-            if(not allpossibilite):
+            if (not allpossibilite):
                 word = word + ")"
             else:
                 word = word[:-1] + ")"
             sentence_returned += word
 # print(sentence)
-finsugg = time.time()
-finall = time.time()
+
 print(sentence_returned)
-print("TEMPS DICTIO : " + str(findict-debutdict))
-print("TEMPS SUGG : " + str(finsugg-debutsugg))
-print("OVERALL TIME : " + str(finall-debutall))
-
-"""
-    **Quand vérifier MAJ ?
-
-    1.Séparer mots/espace/virgule/apostrophe/points
-    2.Boucle sur les séparation
-        2.1.Si word[0] est dans chardel
-            2.1.1.Pas de traitement, on affiche
-        2.2.Sinon
-            2.2.1.Verifier si le mot est dans la table
-                2.2.1.1. Si oui : on affiche direction
-                2.2.1.1. Si non : on genere les possibilitées
-                    2.2.1.1.1. On filtre les possibilitées dans la table
-                    2.2.1.1.2. word = "[" + word + "]("+possitilitées + ")"
-    3.Fini ?
-
-"""
-
