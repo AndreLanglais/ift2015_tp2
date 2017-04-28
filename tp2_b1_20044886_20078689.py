@@ -1,5 +1,6 @@
 import random
 import re
+import io
 
 
 class HashTable:
@@ -119,27 +120,27 @@ chardel = ['"',',','.',';',':','!','?',"'"," "]
 sentence = ""
 alphabet = []
 
-with open("dict.txt") as file:
+with io.open("dict.txt", 'r', encoding='utf8') as file:
     t = 0
     for i in file:
         t += 1
     dictionnary = HashTable(t)
 
-with open("dict.txt") as file:
+with io.open("dict.txt", 'r', encoding='utf8') as file:
     for line in file:
         for i in line[:-1]:
             if i not in alphabet:
                 alphabet.append(i)
         dictionnary.set(line[:-1])
 
-with open("input.txt") as file:
+with io.open("input.txt", 'r', encoding='utf8') as file:
     for line in file:
         sentence += line[:-1]
 
-sentence_table = re.split("(\W+)", sentence)
+sentence_table = re.split("(\W+)", sentence)  # Split every words.
 
 sentence_returned = ""
-for word in sentence_table:
+for word in sentence_table:  # Create suggestions for every misspelled word.
     if any(char in chardel for char in word):
         sentence_returned += word
     else:
@@ -155,4 +156,3 @@ for word in sentence_table:
             word = word[:-1] + ")"
             sentence_returned += word
 print(sentence_returned)
-
